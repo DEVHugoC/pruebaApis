@@ -16,4 +16,10 @@ public class ReniecController {
     public String getDatosPorDni(@PathVariable String numero) {
         return reniecService.consultarPorDni(numero);
     }
+
+    @GetMapping("/factiliza/dni/{numero}")
+    public String getDatosPorDniFactiliza(@PathVariable String numero) {
+        return reniecService.consultarPorDniFactiliza(numero);
+    }
+
 }

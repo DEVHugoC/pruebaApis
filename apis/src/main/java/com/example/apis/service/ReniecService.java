@@ -16,6 +16,12 @@ public class ReniecService {
     @Value("${apis.token}")
     private String token;
 
+    @Value("${factiliza.reniec.api.url}")
+    private String factilizaApiUrl;
+
+    @Value("${factiliza.api.token}")
+    private String factilizaToken;
+
     private final RestTemplate restTemplate = new RestTemplate();
 
     public String consultarPorDni(String dni) {
@@ -43,4 +49,31 @@ public class ReniecService {
             return "{\"error\": \"Error interno en el servidor\"}";
         }
     }
+
+    public String consultarPorDniFactiliza(String dni) {
+        String url = factilizaApiUrl + "/" + dni;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(factilizaToken);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url, HttpMethod.GET, entity, String.class);
+
+            return response.getBody();
+
+        } catch (HttpClientErrorException.NotFound e) {
+            return "{\"error\": \"DNI no encontrado en Factiliza\"}";
+
+        } catch (HttpClientErrorException e) {
+            return "{\"error\": \"Error cliente: " + e.getStatusCode() + "\"}";
+
+        } catch (Exception e) {
+            return "{\"error\": \"Error interno en el servidor (Factiliza)\"}";
+        }
+    }
+
 }

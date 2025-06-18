@@ -17,6 +17,12 @@ public class SunatService {
     @Value("${apis.token}")
     private String token;
 
+    @Value("${factiliza.sunat.api.url}")
+    private String factilizaApiRucUrl;
+
+    @Value("${factiliza.api.token}")
+    private String factilizaToken;
+
     private final RestTemplate restTemplate = new RestTemplate();
 
     public String consultarPorRuc(String ruc) {
@@ -38,4 +44,25 @@ public class SunatService {
             return "{\"error\":\"500 - Error interno del servidor\"}";
         }
     }
+
+    public String consultarPorRucFactiliza(String ruc) {
+        String url = factilizaApiRucUrl + "/" + ruc;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(factilizaToken);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url, HttpMethod.GET, entity, String.class);
+            return response.getBody();
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            return "{\"error\":\"" + e.getStatusCode() + " - " + e.getMessage() + "\"}";
+        } catch (Exception e) {
+            return "{\"error\":\"500 - Error interno del servidor\"}";
+        }
+    }
+
 }
