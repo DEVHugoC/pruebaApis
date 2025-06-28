@@ -27,4 +27,10 @@ public class SunatController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/factiliza/ruc/representante/{numero}")
+    public ResponseEntity<String> getRepresentantePorRucFactiliza(@PathVariable String numero) {
+        String response = sunatService.consultarRepresentantePorRucFactiliza(numero);
+        return ResponseEntity.ok(response);
+    }
+
 }
